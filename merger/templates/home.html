@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FitNation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">FITNATION</div>
+    <nav>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showSection('landing')">Home</a></li>
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">Classes</a></li>
+      <li><a href="#" onclick="toggleChat()">Chat Assistant</a></li>
+      <li><a href="#">Contact Us</a></li>
+
+     {% if session.get('user_id') %}
+      <li><a href="{{ url_for('logout') }}" class="join-btn">Logout</a></li>
+     {% else %}
+      <li><a href="#" class="join-btn" onclick="showForm()">Join</a></li>
+     {% endif %}
+    </ul>
+ 
+    </nav>
+  </header>
+
+ <!-- Landing Section -->
+<div id="landing" class="section">
+  <h1>FITNATION</h1>
+  <p>Train like a beast, look like a beauty</p>
+  <button class="button" onclick="showForm()">Join Now</button>
+  {% if session.get('user_id') %}
+  <a href="{{ url_for('predictor') }}">
+    <button class="button" style="margin-top: 1rem;">Predict Calories</button>
+  </a>
+{% else %}
+  <a href="{{ url_for('login') }}">
+    <button class="button" style="margin-top: 1rem;">Login to Predict</button>
+  </a>
+{% endif %}
+
+
+</div>
+
+
+  <!-- Join Form Section -->
+  <div id="formSection" class="section">
+    <div class="form-container">
+      <h2>Join FitNation</h2>
+       <form id="fitForm" action="/register" method="POST">
+         <label for="name">Full Name</label>
+         <input type="text" id="name" name="name" placeholder="Name" required />
+      
+         <label for="age">Age</label>
+         <input type="number" id="age" name="age" placeholder="0" required />
+      
+         <label for="gender">Gender</label>
+         <select id="gender" name="gender" required>
+          <option value="" disabled selected>Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+         </select>
+      
+         <label for="dob">Date of Birth</label>
+         <input type="date" id="dob" name="dob" required />
+      
+         <label for="mobile">Mobile Number</label>
+         <input type="tel" id="mobile" name="mobile" placeholder="123-456-7890" required />
+      
+         <label for="email">Email ID</label>
+         <input type="email" id="email" name="email" placeholder="example@email.com" required />
+      
+         <label for="password">Password</label>
+         <input type="password" id="password" name="password" required />
+      
+         <button type="submit" class="button">Submit</button>
+       </form>
+      
+      </div>
+  </div>
+
+  <!-- Success Message Section -->
+  <div id="successSection" class="section success-container">
+    <div class="checkmark">✔️</div>
+    <h1>Successfully Joined FitNation!</h1>
+    <p id="thanksMessage">Welcome to the grind. Let’s make gains together 💪</p>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <!-- Our Studio -->
+      <div class="footer-column">
+        <h3>Our Studio</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Leadership</a></li>
+          <li><a href="#">Career</a></li>
+          <li><a href="#">Article & News</a></li>
+          <li><a href="#">Legal Notice</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="footer-column">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="#">Send Ticket</a></li>
+          <li><a href="#">Customer Support</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Forum Community</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-column">
+        <h3>Get in Touch</h3>
+        <ul class="contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> BRCM CET</li>
+          <li><i class="fas fa-envelope"></i> support@domain.tld</li>
+          <li><i class="fas fa-phone-alt"></i> +91 99999 77722</li>
+        </ul>
+
+        <!-- Social Media Icons -->
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-bottom">© 2025 FitNation. All Rights Reserved.</p>
+  </footer>
+
+ <!-- Chatbot Bubble -->
+<div class="chatbot-icon" onclick="toggleChat()">💬</div>
+
+<!-- Chat Window -->
+<div id="chatbot" class="chatbot-box">
+  <div class="chatbot-header">
+    FitNation Assistant
+    <span onclick="toggleChat()" style="cursor:pointer;">✖️</span>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <input type="text" id="chatInput" placeholder="Ask something..." onkeypress="handleChat(event)" />
+</div>
+
+<!-- Scripts -->
+<script>
+  // Loader and section switcher
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      showSection('landing');
+    }, 2000);
+  });
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'flex';
+  }
+
+  function showForm() {
+    showSection('formSection');
+  }
+
+  // Chatbot logic
+  const faq = {
+    "hi": "Hey there! 💪 How can I help you today?",
+    "what is fitnation": "FitNation is your personal fitness companion. We help you track calories and improve workouts.",
+    "how to join": "Click the 'Join Now' button on the homepage and fill out your details!",
+    "calorie prediction": "Click on 'Predict Calories' after logging in to use our smart predictor.",
+    "bmi": "BMI = Body Mass Index. It evaluates weight category based on height & weight.",
+    "best workout": "Depends on your goal! HIIT is great for fat loss. Strength for muscle.",
+    "protein intake": "Rule of thumb: 1.6g per kg of body weight if you exercise.",
+    "bye": "Catch you later! Stay strong 💥"
+  };
+
+  function toggleChat() {
+    const box = document.getElementById("chatbot");
+    box.classList.toggle("active");
+    if (box.classList.contains("active")) {
+      showSuggestedButtons();
+    }
+  }
+
+  function handleChat(event) {
+    if (event.key === "Enter") {
+      const input = document.getElementById("chatInput");
+      processUserMessage(input.value);
+      input.value = "";
+    }
+  }
+
+  function processUserMessage(msg) {
+    const messages = document.getElementById("chatMessages");
+    const userMsg = msg.toLowerCase().trim();
+    if (!userMsg) return;
+
+    messages.innerHTML += `<div><strong>You:</strong> ${msg}</div>`;
+
+    const reply = faq[userMsg] || "Try asking: 'bmi', 'best workout', or 'protein intake'.";
+    messages.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
+    messages.scrollTop = messages.scrollHeight;
+
+    showSuggestedButtons();
+  }
+
+  function showSuggestedButtons() {
+    const messages = document.getElementById("chatMessages");
+    const quickReplies = Object.keys(faq)
+      .filter(q => q !== "bye")
+      .map(q => `<button onclick="processUserMessage('${q}')">${q}</button>`)
+      .join(" ");
+    messages.innerHTML += `<div style="margin-top: 0.5rem;"><em>Suggestions:</em><br>${quickReplies}</div>`;
+    messages.scrollTop = messages.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prediction Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/newpage.css') }}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">FitNation</div>
+    <a href="{{ url_for('home') }}" style="color: white;">Home</a>
+  </header>
+
+  <main class="predictor-container fade-in">
+    <h1>Calories Burnt Result</h1>
+
+    <div class="results">
+      <p><strong>Predicted Calories:</strong> {{ calories }} kcal</p>
+      {% if bmi %}
+      <p><strong>Your BMI:</strong> {{ bmi }}</p>
+      <p><strong>Suggestion:</strong> {{ suggestion }}</p>
+      {% endif %}
+    </div>
+
+    <a href="{{ url_for('predictor') }}">
+      <button class="predict-btn" style="margin-top: 1rem;">Predict Again</button>
+    </a>
+  </main>
+</body>
+</html>
